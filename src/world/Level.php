@@ -5,16 +5,8 @@
  *  ____            _        _   __  __ _                  __  __ ____  
  * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
-<<<<<<< HEAD
-<<<<<<< HEAD
- * |  __/ (_) | (__|   &lt;  __/ |_| |  | | | | | |  __/_____| |  | |  __/
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
-=======
-=======
->>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
  * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
->>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -23,14 +15,14 @@
  *
  * @author PocketMine Team
  * @link http://www.pocketmine.net/
- *
+ * 
  *
 */
 
 class Level{
 	public $entities, $tiles, $blockUpdates, $nextSave, $players = array(), $level;
 	private $time, $startCheck, $startTime, $server, $name, $usedChunks, $changedBlocks, $changedCount, $stopTime;
-
+	
 	public function __construct(PMFLevel $level, Config $entities, Config $tiles, Config $blockUpdates, $name){
 		$this->server = ServerAPI::request();
 		$this->level = $level;
@@ -49,11 +41,11 @@ class Level{
 		$this->changedBlocks = array();
 		$this->changedCount = array();
 	}
-
+	
 	public function close(){
 		$this->__destruct();
 	}
-
+	
 	public function useChunk($X, $Z, Player $player){
 		if(!isset($this->usedChunks[$X.".".$Z])){
 			$this->usedChunks[$X.".".$Z] = array();
@@ -63,7 +55,7 @@ class Level{
 			$this->level->loadChunk($X, $Z);
 		}
 	}
-
+	
 	public function freeAllChunks(Player $player){
 		foreach($this->usedChunks as $i => $c){
 			unset($this->usedChunks[$i][$player->CID]);
@@ -73,7 +65,7 @@ class Level{
 	public function freeChunk($X, $Z, Player $player){
 		unset($this->usedChunks[$X.".".$Z][$player->CID]);
 	}
-
+	
 	public function checkTime(){
 		if(!isset($this->level)){
 			return false;
@@ -84,47 +76,25 @@ class Level{
 		}else{
 			$time = $this->startTime + ($now - $this->startCheck) * 20;
 		}
-<<<<<<< HEAD
-<<<<<<< HEAD
-		if($this-&gt;server-&gt;api-&gt;dhandle("time.change", array("level" =&gt; $this, "time" =&gt; $time)) !== false){
-			$this-&gt;time = $time;
-
-=======
-=======
->>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
 		if($this->server->api->dhandle("time.change", array("level" => $this, "time" => $time)) !== false){
 			$this->time = $time;
 			
->>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
 			$pk = new SetTimePacket;
 			$pk->time = (int) $this->time;
 			$pk->started = $this->stopTime == false;
 			$this->server->api->player->broadcastPacket($this->players, $pk);
 		}
 	}
-
+	
 	public function checkThings(){
 		if(!isset($this->level)){
 			return false;
 		}
 		$now = microtime(true);
-<<<<<<< HEAD
-<<<<<<< HEAD
-		$this-&gt;players = $this-&gt;server-&gt;api-&gt;player-&gt;getAll($this);
-
-		if(count($this-&gt;changedCount) &gt; 0){
-			arsort($this-&gt;changedCount);
-=======
-=======
->>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
 		$this->players = $this->server->api->player->getAll($this);
 		
 		if(count($this->changedCount) > 0){
 			arsort($this->changedCount);
-<<<<<<< HEAD
->>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
-=======
->>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
 			$resendChunks = array();
 			foreach($this->changedCount as $index => $count){
 				if($count < 582){//Optimal value, calculated using the relation between minichunks and single packets
@@ -152,21 +122,9 @@ class Level{
 				$this->changedBlocks = array();
 			}
 		}
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-		if($this-&gt;nextSave &lt; $now){
-			foreach($this-&gt;usedChunks as $i =&gt; $c){
-=======
 		
 		if($this->nextSave < $now){
 			foreach($this->usedChunks as $i => $c){
->>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
-=======
-		
-		if($this->nextSave < $now){
-			foreach($this->usedChunks as $i => $c){
->>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
 				if(count($c) === 0){
 					unset($this->usedChunks[$i]);
 					$X = explode(".", $i);
@@ -177,7 +135,7 @@ class Level{
 			$this->save(false, false);
 		}
 	}
-
+	
 	public function __destruct(){
 		if(isset($this->level)){
 			$this->save(false, false);
@@ -185,7 +143,7 @@ class Level{
 			unset($this->level);
 		}
 	}
-
+	
 	public function save($force = false, $extra = true){
 		if(!isset($this->level)){
 			return false;
@@ -193,7 +151,7 @@ class Level{
 		if($this->server->saveEnabled === false and $force === false){
 			return;
 		}
-
+		
 		if($extra !== false){
 			$entities = array();
 			foreach($this->server->api->entity->getAll($this) as $entity){
@@ -286,83 +244,38 @@ class Level{
 			$this->entities->setAll($entities);
 			$this->entities->save();
 			$tiles = array();
-<<<<<<< HEAD
-<<<<<<< HEAD
-			foreach($this-&gt;server-&gt;api-&gt;tile-&gt;getAll($this) as $tile){
-				$tiles[] = $tile-&gt;data;
-			}
-			$this-&gt;tiles-&gt;setAll($tiles);
-			$this-&gt;tiles-&gt;save();
-
-=======
 			foreach($this->server->api->tile->getAll($this) as $tile){		
 				$tiles[] = $tile->data;
 			}
-=======
-			foreach($this->server->api->tile->getAll($this) as $tile){		
-				$tiles[] = $tile->data;
-			}
->>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
 			$this->tiles->setAll($tiles);
 			$this->tiles->save();
 			
->>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
 			$blockUpdates = array();
 			$updates = $this->server->query("SELECT x,y,z,type,delay FROM blockUpdates WHERE level = '".$this->getName()."';");
 			if($updates !== false and $updates !== true){
 				$timeu = microtime(true);
-<<<<<<< HEAD
-<<<<<<< HEAD
-				while(($bupdate = $updates-&gt;fetchArray(SQLITE3_ASSOC)) !== false){
-					$bupdate["delay"] = max(1, ($bupdate["delay"] - $timeu) * 20);
-=======
-=======
->>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
 				while(($bupdate = $updates->fetchArray(SQLITE3_ASSOC)) !== false){
 					$bupdate["delay"] = max(1, ($bupdate["delay"] - $timeu) * 20);					
->>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
 					$blockUpdates[] = $bupdate;
 				}
 			}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-			$this-&gt;blockUpdates-&gt;setAll($blockUpdates);
-			$this-&gt;blockUpdates-&gt;save();
-
-		}
-
-		$this-&gt;level-&gt;setData("time", (int) $this-&gt;time);
-		$this-&gt;level-&gt;doSaveRound();
-		$this-&gt;level-&gt;saveData();
-		$this-&gt;nextSave = microtime(true) + 45;
-=======
 			$this->blockUpdates->setAll($blockUpdates);
 			$this->blockUpdates->save();
 		
 		}
-=======
-			$this->blockUpdates->setAll($blockUpdates);
-			$this->blockUpdates->save();
-		
-		}
->>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
 		
 		$this->level->setData("time", (int) $this->time);
 		$this->level->doSaveRound();
 		$this->level->saveData();
 		$this->nextSave = microtime(true) + 45;
-<<<<<<< HEAD
->>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
-=======
->>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
 	}
-
+	
 	public function getBlockRaw(Vector3 $pos){
 		$b = $this->level->getBlock($pos->x, $pos->y, $pos->z);
 		return BlockAPI::get($b[0], $b[1], new Position($pos->x, $pos->y, $pos->z, $this));
 	}
-
+	
 	public function getBlock(Vector3 $pos){
 		if(!isset($this->level) or ($pos instanceof Position) and $pos->level !== $this){
 			return false;
@@ -370,7 +283,7 @@ class Level{
 		$b = $this->level->getBlock($pos->x, $pos->y, $pos->z);
 		return BlockAPI::get($b[0], $b[1], new Position($pos->x, $pos->y, $pos->z, $this));
 	}
-
+	
 	public function setBlockRaw(Vector3 $pos, Block $block, $direct = true, $send = true){
 		if(($ret = $this->level->setBlock($pos->x, $pos->y, $pos->z, $block->getID(), $block->getMetadata())) === true and $send !== false){
 			if($direct === true){
@@ -400,7 +313,7 @@ class Level{
 		}
 		return $ret;
 	}
-
+	
 	public function setBlock(Vector3 $pos, Block $block, $update = true, $tiles = false, $direct = false){
 		if(!isset($this->level) or (($pos instanceof Position) and $pos->level !== $this) or $pos->x < 0 or $pos->y < 0 or $pos->z < 0){
 			return false;
@@ -434,21 +347,9 @@ class Level{
 				++$this->changedCount[$i];
 			}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-			if($update === true){
-				$this-&gt;server-&gt;api-&gt;block-&gt;blockUpdateAround($pos, BLOCK_UPDATE_NORMAL, 1);
-				$this-&gt;server-&gt;api-&gt;entity-&gt;updateRadius($pos, 3);
-=======
 			if($update === true){				
 				$this->server->api->block->blockUpdateAround($pos, BLOCK_UPDATE_NORMAL, 1);
 				$this->server->api->entity->updateRadius($pos, 3);
->>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
-=======
-			if($update === true){				
-				$this->server->api->block->blockUpdateAround($pos, BLOCK_UPDATE_NORMAL, 1);
-				$this->server->api->entity->updateRadius($pos, 3);
->>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
 			}
 			if($tiles === true){
 				if(($t = $this->server->api->tile->get($pos)) !== false){
@@ -458,14 +359,14 @@ class Level{
 		}
 		return $ret;
 	}
-
+	
 	public function getMiniChunk($X, $Z, $Y){
 		if(!isset($this->level)){
 			return false;
 		}
 		return $this->level->getMiniChunk($X, $Z, $Y);
 	}
-
+	
 	public function setMiniChunk($X, $Z, $Y, $data){
 		if(!isset($this->level)){
 			return false;
@@ -476,14 +377,14 @@ class Level{
 		}
 		return $this->level->setMiniChunk($X, $Z, $Y, $data);
 	}
-
+	
 	public function loadChunk($X, $Z){
 		if(!isset($this->level)){
 			return false;
 		}
 		return $this->level->loadChunk($X, $Z);
 	}
-
+	
 	public function unloadChunk($X, $Z){
 		if(!isset($this->level)){
 			return false;
@@ -502,15 +403,15 @@ class Level{
 				return $cache;
 			}
 		}
-
-
+		
+		
 		$raw = array();
 		for($Y = 0; $Y < 8; ++$Y){
 			if(($Yndex & (1 << $Y)) > 0){
 				$raw[$Y] = $this->level->getMiniChunk($X, $Z, $Y);
 			}
 		}
-
+		
 		$ordered = "";
 		$flag = chr($Yndex);
 		for($j = 0; $j < 256; ++$j){
@@ -521,13 +422,40 @@ class Level{
 		}
 		if(ADVANCED_CACHE == true and $Yndex == 0xff){
 			Cache::add($identifier, $ordered, 60);
-<<<<<<< HEAD
-		}
-=======
 		}		
->>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
 		return $ordered;
 	}
+
+	public function getOrderedFullChunk($X, $Z){
+		if(!isset($this->level)){
+			return false;
+		}
+		if(ADVANCED_CACHE == true){
+			$identifier = "world:{$this->name}:$X:$Z";
+			if(($cache = Cache::get($identifier)) !== false){
+				return $cache;
+			}
+		}
+
+		echo("Sending chunk" . $X . ":" . $Z . "\n");
+
+		$orderedIds = str_repeat("\x2e", 16*16*128);
+		$orderedData = str_repeat("\x00", 16*16*64);
+		$orderedSkyLight = $orderedData;
+		$orderedLight = $orderedData;
+		$orderedBiomeIds = str_repeat("\x00", 16*16);
+		$orderedBiomeColors = Utils::writeInt(0);
+		$tileEntities = "";
+		$orderedUncompressed = Utils::writeLInt($X) . Utils::writeLInt($Z) .
+			$orderedIds . $orderedData . $orderedSkyLight . $orderedLight .
+			$orderedBiomeIds . $orderedBiomeColors . $tileEntities;
+		$ordered = zlib_encode($orderedUncompressed, ZLIB_ENCODING_DEFLATE, 1);
+		if(ADVANCED_CACHE == true){
+			Cache::add($identifier, $ordered, 60);
+		}
+		return $ordered;
+	}
+
 
 	public function getOrderedMiniChunk($X, $Z, $Y){
 		if(!isset($this->level)){
@@ -541,14 +469,14 @@ class Level{
 		}
 		return $ordered;
 	}
-
+	
 	public function getSpawn(){
 		if(!isset($this->level)){
 			return false;
 		}
 		return new Position($this->level->getData("spawnX"), $this->level->getData("spawnY"), $this->level->getData("spawnZ"), $this);
 	}
-
+	
 	public function getSafeSpawn($spawn = false){
 		if($spawn === false){
 			$spawn = $this->getSpawn();
@@ -580,7 +508,7 @@ class Level{
 		}
 		return false;
 	}
-
+	
 	public function setSpawn(Vector3 $pos){
 		if(!isset($this->level)){
 			return false;
@@ -589,47 +517,47 @@ class Level{
 		$this->level->setData("spawnY", $pos->y);
 		$this->level->setData("spawnZ", $pos->z);
 	}
-
+	
 	public function getTime(){
 		return (int) ($this->time);
 	}
-
+	
 	public function getName(){
 		return $this->name;//return $this->level->getData("name");
 	}
-
+	
 	public function setTime($time){
 		$this->startTime = $this->time = (int) $time;
 		$this->startCheck = microtime(true);
 		$this->checkTime();
 	}
-
+	
 	public function stopTime(){
 		$this->stopTime = true;
 		$this->startCheck = 0;
 		$this->checkTime();
 	}
-
+	
 	public function startTime(){
 		$this->stopTime = false;
 		$this->startCheck = microtime(true);
 		$this->checkTime();
 	}
-
+	
 	public function getSeed(){
 		if(!isset($this->level)){
 			return false;
 		}
 		return (int) $this->level->getData("seed");
 	}
-
+	
 	public function setSeed($seed){
 		if(!isset($this->level)){
 			return false;
 		}
 		$this->level->setData("seed", (int) $seed);
 	}
-
+	
 	public function scheduleBlockUpdate(Position $pos, $delay, $type = BLOCK_UPDATE_SCHEDULED){
 		if(!isset($this->level)){
 			return false;
