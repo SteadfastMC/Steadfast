@@ -6,9 +6,12 @@
  * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
 <<<<<<< HEAD
+<<<<<<< HEAD
  * |  __/ (_) | (__|   &lt;  __/ |_| |  | | | | | |  __/_____| |  | |  __/
  * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
 =======
+=======
+>>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
  * |  __/ (_) | (__|   <  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
  * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
 >>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
@@ -82,10 +85,13 @@ class Level{
 			$time = $this->startTime + ($now - $this->startCheck) * 20;
 		}
 <<<<<<< HEAD
+<<<<<<< HEAD
 		if($this-&gt;server-&gt;api-&gt;dhandle("time.change", array("level" =&gt; $this, "time" =&gt; $time)) !== false){
 			$this-&gt;time = $time;
 
 =======
+=======
+>>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
 		if($this->server->api->dhandle("time.change", array("level" => $this, "time" => $time)) !== false){
 			$this->time = $time;
 			
@@ -103,15 +109,21 @@ class Level{
 		}
 		$now = microtime(true);
 <<<<<<< HEAD
+<<<<<<< HEAD
 		$this-&gt;players = $this-&gt;server-&gt;api-&gt;player-&gt;getAll($this);
 
 		if(count($this-&gt;changedCount) &gt; 0){
 			arsort($this-&gt;changedCount);
 =======
+=======
+>>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
 		$this->players = $this->server->api->player->getAll($this);
 		
 		if(count($this->changedCount) > 0){
 			arsort($this->changedCount);
+<<<<<<< HEAD
+>>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
+=======
 >>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
 			$resendChunks = array();
 			foreach($this->changedCount as $index => $count){
@@ -141,9 +153,15 @@ class Level{
 			}
 		}
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 		if($this-&gt;nextSave &lt; $now){
 			foreach($this-&gt;usedChunks as $i =&gt; $c){
+=======
+		
+		if($this->nextSave < $now){
+			foreach($this->usedChunks as $i => $c){
+>>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
 =======
 		
 		if($this->nextSave < $now){
@@ -269,6 +287,7 @@ class Level{
 			$this->entities->save();
 			$tiles = array();
 <<<<<<< HEAD
+<<<<<<< HEAD
 			foreach($this-&gt;server-&gt;api-&gt;tile-&gt;getAll($this) as $tile){
 				$tiles[] = $tile-&gt;data;
 			}
@@ -279,6 +298,11 @@ class Level{
 			foreach($this->server->api->tile->getAll($this) as $tile){		
 				$tiles[] = $tile->data;
 			}
+=======
+			foreach($this->server->api->tile->getAll($this) as $tile){		
+				$tiles[] = $tile->data;
+			}
+>>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
 			$this->tiles->setAll($tiles);
 			$this->tiles->save();
 			
@@ -288,9 +312,12 @@ class Level{
 			if($updates !== false and $updates !== true){
 				$timeu = microtime(true);
 <<<<<<< HEAD
+<<<<<<< HEAD
 				while(($bupdate = $updates-&gt;fetchArray(SQLITE3_ASSOC)) !== false){
 					$bupdate["delay"] = max(1, ($bupdate["delay"] - $timeu) * 20);
 =======
+=======
+>>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
 				while(($bupdate = $updates->fetchArray(SQLITE3_ASSOC)) !== false){
 					$bupdate["delay"] = max(1, ($bupdate["delay"] - $timeu) * 20);					
 >>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
@@ -298,6 +325,7 @@ class Level{
 				}
 			}
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 			$this-&gt;blockUpdates-&gt;setAll($blockUpdates);
 			$this-&gt;blockUpdates-&gt;save();
@@ -313,11 +341,20 @@ class Level{
 			$this->blockUpdates->save();
 		
 		}
+=======
+			$this->blockUpdates->setAll($blockUpdates);
+			$this->blockUpdates->save();
+		
+		}
+>>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
 		
 		$this->level->setData("time", (int) $this->time);
 		$this->level->doSaveRound();
 		$this->level->saveData();
 		$this->nextSave = microtime(true) + 45;
+<<<<<<< HEAD
+>>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
+=======
 >>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
 	}
 
@@ -398,9 +435,15 @@ class Level{
 			}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 			if($update === true){
 				$this-&gt;server-&gt;api-&gt;block-&gt;blockUpdateAround($pos, BLOCK_UPDATE_NORMAL, 1);
 				$this-&gt;server-&gt;api-&gt;entity-&gt;updateRadius($pos, 3);
+=======
+			if($update === true){				
+				$this->server->api->block->blockUpdateAround($pos, BLOCK_UPDATE_NORMAL, 1);
+				$this->server->api->entity->updateRadius($pos, 3);
+>>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
 =======
 			if($update === true){				
 				$this->server->api->block->blockUpdateAround($pos, BLOCK_UPDATE_NORMAL, 1);
@@ -478,7 +521,11 @@ class Level{
 		}
 		if(ADVANCED_CACHE == true and $Yndex == 0xff){
 			Cache::add($identifier, $ordered, 60);
+<<<<<<< HEAD
 		}
+=======
+		}		
+>>>>>>> parent of 8b6dac3... Some chunk sending - TODO: get proper from level
 		return $ordered;
 	}
 
