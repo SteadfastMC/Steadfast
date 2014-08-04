@@ -7,8 +7,8 @@
  *  ____            _        _   __  __ _                  __  __ ____  
  * |  _ \ ___   ___| | _____| |_|  \/  (_)_ __   ___      |  \/  |  _ \ 
  * | |_) / _ \ / __| |/ / _ \ __| |\/| | | '_ \ / _ \_____| |\/| | |_) |
- * |  __/ (_) | (__|   &lt;  __/ |_| |  | | | | | |  __/_____| |  | |  __/ 
- * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_| 
+ * |  __/ (_) | (__|   &lt;  __/ |_| |  | | | | | |  __/_____| |  | |  __/
+ * |_|   \___/ \___|_|\_\___|\__|_|  |_|_|_| |_|\___|     |_|  |_|_|
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -17,14 +17,14 @@
  *
  * @author PocketMine Team
  * @link http://www.pocketmine.net/
- * 
+ *
  *
 */
 
 class Level{
 	public $entities, $tiles, $blockUpdates, $nextSave, $players = array(), $level;
 	private $time, $startCheck, $startTime, $server, $name, $usedChunks, $changedBlocks, $changedCount, $stopTime;
-	
+
 	public function __construct(PMFLevel $level, Config $entities, Config $tiles, Config $blockUpdates, $name){
 		$this-&gt;server = ServerAPI::request();
 		$this-&gt;level = $level;
@@ -43,11 +43,11 @@ class Level{
 		$this-&gt;changedBlocks = array();
 		$this-&gt;changedCount = array();
 	}
-	
+
 	public function close(){
 		$this-&gt;__destruct();
 	}
-	
+
 	public function useChunk($X, $Z, Player $player){
 		if(!isset($this-&gt;usedChunks[$X.".".$Z])){
 			$this-&gt;usedChunks[$X.".".$Z] = array();
@@ -57,7 +57,7 @@ class Level{
 			$this-&gt;level-&gt;loadChunk($X, $Z);
 		}
 	}
-	
+
 	public function freeAllChunks(Player $player){
 		foreach($this-&gt;usedChunks as $i =&gt; $c){
 			unset($this-&gt;usedChunks[$i][$player-&gt;CID]);
@@ -67,7 +67,7 @@ class Level{
 	public function freeChunk($X, $Z, Player $player){
 		unset($this-&gt;usedChunks[$X.".".$Z][$player-&gt;CID]);
 	}
-	
+
 	public function checkTime(){
 		if(!isset($this-&gt;level)){
 			return false;
@@ -80,21 +80,21 @@ class Level{
 		}
 		if($this-&gt;server-&gt;api-&gt;dhandle("time.change", array("level" =&gt; $this, "time" =&gt; $time)) !== false){
 			$this-&gt;time = $time;
-			
+
 			$pk = new SetTimePacket;
 			$pk-&gt;time = (int) $this-&gt;time;
 			$pk-&gt;started = $this-&gt;stopTime == false;
 			$this-&gt;server-&gt;api-&gt;player-&gt;broadcastPacket($this-&gt;players, $pk);
 		}
 	}
-	
+
 	public function checkThings(){
 		if(!isset($this-&gt;level)){
 			return false;
 		}
 		$now = microtime(true);
 		$this-&gt;players = $this-&gt;server-&gt;api-&gt;player-&gt;getAll($this);
-		
+
 		if(count($this-&gt;changedCount) &gt; 0){
 			arsort($this-&gt;changedCount);
 			$resendChunks = array();
@@ -124,7 +124,7 @@ class Level{
 				$this-&gt;changedBlocks = array();
 			}
 		}
-		
+
 		if($this-&gt;nextSave &lt; $now){
 			foreach($this-&gt;usedChunks as $i =&gt; $c){
 				if(count($c) === 0){
@@ -137,7 +137,7 @@ class Level{
 			$this-&gt;save(false, false);
 		}
 	}
-	
+
 	public function __destruct(){
 		if(isset($this-&gt;level)){
 			$this-&gt;save(false, false);
@@ -145,7 +145,7 @@ class Level{
 			unset($this-&gt;level);
 		}
 	}
-	
+
 	public function save($force = false, $extra = true){
 		if(!isset($this-&gt;level)){
 			return false;
@@ -153,7 +153,7 @@ class Level{
 		if($this-&gt;server-&gt;saveEnabled === false and $force === false){
 			return;
 		}
-		
+
 		if($extra !== false){
 			$entities = array();
 			foreach($this-&gt;server-&gt;api-&gt;entity-&gt;getAll($this) as $entity){
@@ -246,38 +246,38 @@ class Level{
 			$this-&gt;entities-&gt;setAll($entities);
 			$this-&gt;entities-&gt;save();
 			$tiles = array();
-			foreach($this-&gt;server-&gt;api-&gt;tile-&gt;getAll($this) as $tile){		
+			foreach($this-&gt;server-&gt;api-&gt;tile-&gt;getAll($this) as $tile){
 				$tiles[] = $tile-&gt;data;
 			}
 			$this-&gt;tiles-&gt;setAll($tiles);
 			$this-&gt;tiles-&gt;save();
-			
+
 			$blockUpdates = array();
 			$updates = $this-&gt;server-&gt;query("SELECT x,y,z,type,delay FROM blockUpdates WHERE level = '".$this-&gt;getName()."';");
 			if($updates !== false and $updates !== true){
 				$timeu = microtime(true);
 				while(($bupdate = $updates-&gt;fetchArray(SQLITE3_ASSOC)) !== false){
-					$bupdate["delay"] = max(1, ($bupdate["delay"] - $timeu) * 20);					
+					$bupdate["delay"] = max(1, ($bupdate["delay"] - $timeu) * 20);
 					$blockUpdates[] = $bupdate;
 				}
 			}
 
 			$this-&gt;blockUpdates-&gt;setAll($blockUpdates);
 			$this-&gt;blockUpdates-&gt;save();
-		
+
 		}
-		
+
 		$this-&gt;level-&gt;setData("time", (int) $this-&gt;time);
 		$this-&gt;level-&gt;doSaveRound();
 		$this-&gt;level-&gt;saveData();
 		$this-&gt;nextSave = microtime(true) + 45;
 	}
-	
+
 	public function getBlockRaw(Vector3 $pos){
 		$b = $this-&gt;level-&gt;getBlock($pos-&gt;x, $pos-&gt;y, $pos-&gt;z);
 		return BlockAPI::get($b[0], $b[1], new Position($pos-&gt;x, $pos-&gt;y, $pos-&gt;z, $this));
 	}
-	
+
 	public function getBlock(Vector3 $pos){
 		if(!isset($this-&gt;level) or ($pos instanceof Position) and $pos-&gt;level !== $this){
 			return false;
@@ -285,7 +285,7 @@ class Level{
 		$b = $this-&gt;level-&gt;getBlock($pos-&gt;x, $pos-&gt;y, $pos-&gt;z);
 		return BlockAPI::get($b[0], $b[1], new Position($pos-&gt;x, $pos-&gt;y, $pos-&gt;z, $this));
 	}
-	
+
 	public function setBlockRaw(Vector3 $pos, Block $block, $direct = true, $send = true){
 		if(($ret = $this-&gt;level-&gt;setBlock($pos-&gt;x, $pos-&gt;y, $pos-&gt;z, $block-&gt;getID(), $block-&gt;getMetadata())) === true and $send !== false){
 			if($direct === true){
@@ -315,7 +315,7 @@ class Level{
 		}
 		return $ret;
 	}
-	
+
 	public function setBlock(Vector3 $pos, Block $block, $update = true, $tiles = false, $direct = false){
 		if(!isset($this-&gt;level) or (($pos instanceof Position) and $pos-&gt;level !== $this) or $pos-&gt;x &lt; 0 or $pos-&gt;y &lt; 0 or $pos-&gt;z &lt; 0){
 			return false;
@@ -349,7 +349,7 @@ class Level{
 				++$this-&gt;changedCount[$i];
 			}
 
-			if($update === true){				
+			if($update === true){
 				$this-&gt;server-&gt;api-&gt;block-&gt;blockUpdateAround($pos, BLOCK_UPDATE_NORMAL, 1);
 				$this-&gt;server-&gt;api-&gt;entity-&gt;updateRadius($pos, 3);
 			}
@@ -361,14 +361,14 @@ class Level{
 		}
 		return $ret;
 	}
-	
+
 	public function getMiniChunk($X, $Z, $Y){
 		if(!isset($this-&gt;level)){
 			return false;
 		}
 		return $this-&gt;level-&gt;getMiniChunk($X, $Z, $Y);
 	}
-	
+
 	public function setMiniChunk($X, $Z, $Y, $data){
 		if(!isset($this-&gt;level)){
 			return false;
@@ -379,14 +379,14 @@ class Level{
 		}
 		return $this-&gt;level-&gt;setMiniChunk($X, $Z, $Y, $data);
 	}
-	
+
 	public function loadChunk($X, $Z){
 		if(!isset($this-&gt;level)){
 			return false;
 		}
 		return $this-&gt;level-&gt;loadChunk($X, $Z);
 	}
-	
+
 	public function unloadChunk($X, $Z){
 		if(!isset($this-&gt;level)){
 			return false;
@@ -405,15 +405,15 @@ class Level{
 				return $cache;
 			}
 		}
-		
-		
+
+
 		$raw = array();
 		for($Y = 0; $Y &lt; 8; ++$Y){
 			if(($Yndex &amp; (1 &lt;&lt; $Y)) &gt; 0){
 				$raw[$Y] = $this-&gt;level-&gt;getMiniChunk($X, $Z, $Y);
 			}
 		}
-		
+
 		$ordered = "";
 		$flag = chr($Yndex);
 		for($j = 0; $j &lt; 256; ++$j){
@@ -424,7 +424,7 @@ class Level{
 		}
 		if(ADVANCED_CACHE == true and $Yndex == 0xff){
 			Cache::add($identifier, $ordered, 60);
-		}		
+		}
 		return $ordered;
 	}
 
@@ -471,14 +471,14 @@ class Level{
 		}
 		return $ordered;
 	}
-	
+
 	public function getSpawn(){
 		if(!isset($this-&gt;level)){
 			return false;
 		}
 		return new Position($this-&gt;level-&gt;getData("spawnX"), $this-&gt;level-&gt;getData("spawnY"), $this-&gt;level-&gt;getData("spawnZ"), $this);
 	}
-	
+
 	public function getSafeSpawn($spawn = false){
 		if($spawn === false){
 			$spawn = $this-&gt;getSpawn();
@@ -510,7 +510,7 @@ class Level{
 		}
 		return false;
 	}
-	
+
 	public function setSpawn(Vector3 $pos){
 		if(!isset($this-&gt;level)){
 			return false;
@@ -519,47 +519,47 @@ class Level{
 		$this-&gt;level-&gt;setData("spawnY", $pos-&gt;y);
 		$this-&gt;level-&gt;setData("spawnZ", $pos-&gt;z);
 	}
-	
+
 	public function getTime(){
 		return (int) ($this-&gt;time);
 	}
-	
+
 	public function getName(){
 		return $this-&gt;name;//return $this-&gt;level-&gt;getData("name");
 	}
-	
+
 	public function setTime($time){
 		$this-&gt;startTime = $this-&gt;time = (int) $time;
 		$this-&gt;startCheck = microtime(true);
 		$this-&gt;checkTime();
 	}
-	
+
 	public function stopTime(){
 		$this-&gt;stopTime = true;
 		$this-&gt;startCheck = 0;
 		$this-&gt;checkTime();
 	}
-	
+
 	public function startTime(){
 		$this-&gt;stopTime = false;
 		$this-&gt;startCheck = microtime(true);
 		$this-&gt;checkTime();
 	}
-	
+
 	public function getSeed(){
 		if(!isset($this-&gt;level)){
 			return false;
 		}
 		return (int) $this-&gt;level-&gt;getData("seed");
 	}
-	
+
 	public function setSeed($seed){
 		if(!isset($this-&gt;level)){
 			return false;
 		}
 		$this-&gt;level-&gt;setData("seed", (int) $seed);
 	}
-	
+
 	public function scheduleBlockUpdate(Position $pos, $delay, $type = BLOCK_UPDATE_SCHEDULED){
 		if(!isset($this-&gt;level)){
 			return false;
