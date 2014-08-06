@@ -90,10 +90,7 @@ class ProtocolInfo{
 	const ENTITY_DATA_PACKET = 0xb8;
 	//const PLAYER_INPUT_PACKET = 0xb9;
 	const FULL_CHUNK_DATA_PACKET = 0xba;
-<<<<<<< HEAD
-=======
 	const UNLOAD_CHUNK_PACKET = 0xbb;
->>>>>>> c17ede5c5239669ac41255ec5b40f5a6822c1741
 	
 	public static $packets = array(
 		-1 => "UnknownPacket",
@@ -149,10 +146,7 @@ class ProtocolInfo{
 		ProtocolInfo::ADVENTURE_SETTINGS_PACKET => "AdventureSettingsPacket",
 		ProtocolInfo::ENTITY_DATA_PACKET => "EntityDataPacket",
 		ProtocolInfo::FULL_CHUNK_DATA_PACKET => "FullChunkDataPacket",
-<<<<<<< HEAD
-=======
 		ProtocolInfo::UNLOAD_CHUNK_PACKET => "UnloadChunkPacket",
->>>>>>> c17ede5c5239669ac41255ec5b40f5a6822c1741
 	);
 
 }
