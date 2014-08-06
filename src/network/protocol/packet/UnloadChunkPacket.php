@@ -19,13 +19,12 @@
  *
 */
 
-class FullChunkDataPacket extends RakNetDataPacket{
+class UnloadChunkPacket extends RakNetDataPacket{
 	public $chunkX;
 	public $chunkZ;
-	public $data;
 	
 	public function pid(){
-		return ProtocolInfo::FULL_CHUNK_DATA_PACKET;
+		return ProtocolInfo::UNLOAD_CHUNK_PACKET;
 	}
 	
 	public function decode(){
@@ -34,7 +33,8 @@ class FullChunkDataPacket extends RakNetDataPacket{
 	
 	public function encode(){
 		$this->reset();
-		$this->put($this->data);
+		$this->putInt($this->chunkX);
+		$this->putInt($this->chunkZ);
 	}
 
 }
