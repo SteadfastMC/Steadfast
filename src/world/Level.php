@@ -439,10 +439,9 @@ class Level{
 	}
 
 	public function getOrderedFullChunk($X, $Z){
-<<<<<<< HEAD
+
         //todo: make asynchronous
-=======
->>>>>>> c17ede5c5239669ac41255ec5b40f5a6822c1741
+
 		if(!isset($this->level)){
 			return false;
 		}
@@ -454,16 +453,6 @@ class Level{
 		}
 
 		echo("Sending chunk" . $X . ":" . $Z . "\n");
-<<<<<<< HEAD
-        	$data = $this->getOptimizedChunk($X,$Z);
-        	$orderedIds = $data[0];
-        	$orderedData = $data[1];
-		$orderedSkyLight = $orderedData;
-		$orderedLight = $orderedData;
-		$orderedBiomeIds = str_repeat("\x00", 16*16);
-		$orderedBiomeColors = Utils::writeInt(0);
-		$tileEntities = "";
-=======
 
 		$orderedIds = "";
 		$orderedData = str_repeat("\x00", 16*16*64);
@@ -486,7 +475,6 @@ class Level{
 				}
 			}
 		}
->>>>>>> c17ede5c5239669ac41255ec5b40f5a6822c1741
 		$orderedUncompressed = Utils::writeLInt($X) . Utils::writeLInt($Z) .
 			$orderedIds . $orderedData . $orderedSkyLight . $orderedLight .
 			$orderedBiomeIds . $orderedBiomeColors . $tileEntities;
@@ -497,7 +485,7 @@ class Level{
 		return $ordered;
 	}
 
-<<<<<<< HEAD
+
     public function getOptimizedChunk($X, $Z, $gen_only = false, $suppress = false) {
         if($X > 15 or $Z > 15) {
             return array("",""); // return empty string = client can't walk there
@@ -557,8 +545,6 @@ class Level{
         }
         return $this->ochunkCache[$X.",".$Z];
     }
-=======
->>>>>>> c17ede5c5239669ac41255ec5b40f5a6822c1741
 
 	public function getOrderedMiniChunk($X, $Z, $Y){
 		if(!isset($this->level)){
