@@ -439,7 +439,10 @@ class Level{
 	}
 
 	public function getOrderedFullChunk($X, $Z){
+<<<<<<< HEAD
         //todo: make asynchronous
+=======
+>>>>>>> c17ede5c5239669ac41255ec5b40f5a6822c1741
 		if(!isset($this->level)){
 			return false;
 		}
@@ -451,6 +454,7 @@ class Level{
 		}
 
 		echo("Sending chunk" . $X . ":" . $Z . "\n");
+<<<<<<< HEAD
         	$data = $this->getOptimizedChunk($X,$Z);
         	$orderedIds = $data[0];
         	$orderedData = $data[1];
@@ -459,6 +463,30 @@ class Level{
 		$orderedBiomeIds = str_repeat("\x00", 16*16);
 		$orderedBiomeColors = Utils::writeInt(0);
 		$tileEntities = "";
+=======
+
+		$orderedIds = "";
+		$orderedData = str_repeat("\x00", 16*16*64);
+		$orderedSkyLight = $orderedData;
+		$orderedLight = $orderedData;
+		$orderedBiomeIds = str_repeat("\x01", 16*16); //all plains, according to PocketMine 1.4 source
+		$orderedBiomeColors = str_repeat("\x00\x85\xb2\x4a", 256); // also PM 1.4
+		$tileEntities = "";
+		$this->level->loadChunk($X, $Z);
+		for ($aX = 0; $aX < 16; $aX++) {
+			for ($aZ = 0; $aZ < 16; $aZ++) {
+				for ($y = 0; $y < 8; $y++) {
+					$miniChunk = $this->level->getMiniChunk($X, $Z, $y);
+					$miniChunkIndex = ($aX << 5) + ($aZ << 9);
+					$orderedIds .= substr($miniChunk, $miniChunkIndex, 16);
+					//$miniChunkIndex = 4096 + ((($aX << 5) + ($aZ << 9)) >> 1);
+					//$orderedData .= substr($miniChunk, $miniChunkIndex, 8);
+					//$miniChunkIndex += 2048;
+					//$orderedLight .= substr($miniChunk, $miniChunkIndex, 8);
+				}
+			}
+		}
+>>>>>>> c17ede5c5239669ac41255ec5b40f5a6822c1741
 		$orderedUncompressed = Utils::writeLInt($X) . Utils::writeLInt($Z) .
 			$orderedIds . $orderedData . $orderedSkyLight . $orderedLight .
 			$orderedBiomeIds . $orderedBiomeColors . $tileEntities;
@@ -469,6 +497,7 @@ class Level{
 		return $ordered;
 	}
 
+<<<<<<< HEAD
     public function getOptimizedChunk($X, $Z, $gen_only = false, $suppress = false) {
         if($X > 15 or $Z > 15) {
             return array("",""); // return empty string = client can't walk there
@@ -528,6 +557,8 @@ class Level{
         }
         return $this->ochunkCache[$X.",".$Z];
     }
+=======
+>>>>>>> c17ede5c5239669ac41255ec5b40f5a6822c1741
 
 	public function getOrderedMiniChunk($X, $Z, $Y){
 		if(!isset($this->level)){
